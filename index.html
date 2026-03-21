@@ -60,11 +60,10 @@
   .hero-name { font-family:'Space Grotesk',sans-serif; font-size:clamp(36px,5.5vw,72px); font-weight:800; line-height:1; letter-spacing:-2px; margin-bottom:20px; white-space:nowrap; background:linear-gradient(135deg,#ffffff 0%,#d4d4d4 40%,#c0c0c0 75%,#f0f0f0 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .hero-name .split-line { display:inline; }
   /* SVG PATH DRAW ANIMATION */
-  .hero-name-svg-wrap { margin-bottom:20px; }
-  .hero-name-svg-wrap svg { width:100%; height:auto; display:block; overflow:visible; }
-  .svg-hero-name { fill:none; stroke:url(#nmGrad); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:3000; stroke-dashoffset:3000; animation:svgDraw 2.4s cubic-bezier(0.4,0,0.2,1) 0.3s forwards, svgFill 0.8s ease 2.7s forwards; }
+  .hero-name-wrap { position:relative; }
+  #heroNameReal { opacity:0; transition:opacity 0.5s ease; }
+  #heroDrawSvg { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
   @keyframes svgDraw { to { stroke-dashoffset:0; } }
-  @keyframes svgFill { to { fill:url(#nmGrad); stroke-opacity:0; } }
   .hero-sub { font-size:16px; font-weight:400; color:var(--muted); line-height:1.7; max-width:520px; margin-bottom:28px; }
   .hero-pills { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start; }
   .hero-pill { font-size:12px; font-weight:600; letter-spacing:0.5px; padding:7px 18px; border-radius:40px; background:rgba(255,255,255,0.05); border:1px solid var(--border2); color:var(--text); }
@@ -275,8 +274,11 @@
 <section class="hero" id="hero">
   <div class="hero-top">
     <div class="hero-top-left">
-      <div class="hero-name-svg-wrap" role="heading" aria-level="1" aria-label="Varun Sudhakar P">
-        <svg id="heroNameSvg" viewBox="0 0 700 88" preserveAspectRatio="xMinYMid meet">
+      <div class="hero-name-wrap">
+        <h1 class="hero-name" id="heroNameReal">
+          <span class="split-line">VARUN </span><span class="split-line">SUDHAKAR </span><span class="split-line">P</span>
+        </h1>
+        <svg id="heroDrawSvg" aria-hidden="true">
           <defs>
             <linearGradient id="nmGrad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stop-color="#ffffff"/>
@@ -285,7 +287,7 @@
               <stop offset="100%" stop-color="#f0f0f0"/>
             </linearGradient>
           </defs>
-          <text class="svg-hero-name" id="heroNameText" x="2" y="76" font-family="'Space Grotesk', sans-serif" font-size="72" font-weight="800" letter-spacing="-2">VARUN SUDHAKAR P</text>
+          <text id="heroDrawText" fill="none" stroke="url(#nmGrad)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></text>
         </svg>
       </div>
       <p class="hero-sub">Senior SAP BTP Technology Consultant — architecting enterprise solutions across 7 countries and 13+ years of global experience.</p>
@@ -1044,17 +1046,38 @@ window.addEventListener('scroll',()=>{const y=window.scrollY;const bot=document.
   });
 })();
 
-/* ── SVG HERO NAME: AUTO-FIT VIEWBOX TO ACTUAL TEXT SIZE ── */
+/* ── SVG HERO PATH-DRAW: mirror h1 size exactly ── */
 document.fonts.ready.then(function() {
-  var svg  = document.getElementById('heroNameSvg');
-  var text = document.getElementById('heroNameText');
-  if (!svg || !text) return;
-  try {
-    var b = text.getBBox();
-    if (b.width > 0) {
-      svg.setAttribute('viewBox', (b.x - 2) + ' ' + (b.y - 4) + ' ' + (b.width + 4) + ' ' + (b.height + 8));
-    }
-  } catch(e) {}
+  var h1  = document.getElementById('heroNameReal');
+  var svg = document.getElementById('heroDrawSvg');
+  var txt = document.getElementById('heroDrawText');
+  if (!h1 || !svg || !txt) return;
+
+  var cs = window.getComputedStyle(h1);
+  var fs = parseFloat(cs.fontSize);
+  var ls = parseFloat(cs.letterSpacing) || -2;
+
+  // Mirror font properties onto the SVG text
+  txt.setAttribute('x', '0');
+  txt.setAttribute('y', Math.round(fs * 0.88));
+  txt.setAttribute('font-family', cs.fontFamily);
+  txt.setAttribute('font-size', fs);
+  txt.setAttribute('font-weight', cs.fontWeight);
+  txt.setAttribute('letter-spacing', ls);
+  txt.textContent = 'VARUN SUDHAKAR P';
+
+  // Kick off the stroke-draw animation
+  txt.style.strokeDasharray  = '3000';
+  txt.style.strokeDashoffset = '3000';
+  txt.style.animation = 'svgDraw 2.4s cubic-bezier(0.4,0,0.2,1) 0.3s forwards';
+
+  // After draw finishes → fade in the real h1, fade out the SVG
+  setTimeout(function() {
+    h1.style.opacity = '1';
+    svg.style.transition = 'opacity 0.5s ease';
+    svg.style.opacity = '0';
+    setTimeout(function() { svg.remove(); }, 600);
+  }, 2900);
 });
 
 </script>
