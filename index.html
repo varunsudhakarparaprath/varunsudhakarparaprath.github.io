@@ -276,7 +276,7 @@
   <div class="hero-top">
     <div class="hero-top-left">
       <div class="hero-name-svg-wrap" role="heading" aria-level="1" aria-label="Varun Sudhakar P">
-        <svg viewBox="0 0 800 90" preserveAspectRatio="xMinYMid meet">
+        <svg id="heroNameSvg" viewBox="0 0 700 88" preserveAspectRatio="xMinYMid meet">
           <defs>
             <linearGradient id="nmGrad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stop-color="#ffffff"/>
@@ -285,7 +285,7 @@
               <stop offset="100%" stop-color="#f0f0f0"/>
             </linearGradient>
           </defs>
-          <text class="svg-hero-name" x="2" y="76" font-family="'Space Grotesk', sans-serif" font-size="72" font-weight="800" letter-spacing="-2">VARUN SUDHAKAR P</text>
+          <text class="svg-hero-name" id="heroNameText" x="2" y="76" font-family="'Space Grotesk', sans-serif" font-size="72" font-weight="800" letter-spacing="-2">VARUN SUDHAKAR P</text>
         </svg>
       </div>
       <p class="hero-sub">Senior SAP BTP Technology Consultant — architecting enterprise solutions across 7 countries and 13+ years of global experience.</p>
@@ -1043,6 +1043,19 @@ window.addEventListener('scroll',()=>{const y=window.scrollY;const bot=document.
     if (particles.length > COUNT + 60) particles.splice(0, 6);
   });
 })();
+
+/* ── SVG HERO NAME: AUTO-FIT VIEWBOX TO ACTUAL TEXT SIZE ── */
+document.fonts.ready.then(function() {
+  var svg  = document.getElementById('heroNameSvg');
+  var text = document.getElementById('heroNameText');
+  if (!svg || !text) return;
+  try {
+    var b = text.getBBox();
+    if (b.width > 0) {
+      svg.setAttribute('viewBox', (b.x - 2) + ' ' + (b.y - 4) + ' ' + (b.width + 4) + ' ' + (b.height + 8));
+    }
+  } catch(e) {}
+});
 
 </script>
 </body>
