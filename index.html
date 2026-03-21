@@ -1027,6 +1027,48 @@ window.addEventListener('scroll',()=>{const y=window.scrollY;const bot=document.
     if (particles.length > COUNT + 60) particles.splice(0, 6);
   });
 })();
+
+/* ── HERO NAME SCRAMBLE ── */
+(function() {
+  const el = document.querySelector('.hero-name');
+  if (!el) return;
+
+  const finalText = 'VARUN SUDHAKAR P';
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#@$%&!?0123456789';
+  const duration = 2000;   // total ms
+  const fps = 30;
+  const totalFrames = Math.floor(duration / (1000 / fps));
+  let frame = 0;
+
+  // Save original HTML to restore after animation
+  const originalHTML = el.innerHTML;
+
+  // Set initial scrambled display
+  el.textContent = finalText.split('').map(c => c === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)]).join('');
+
+  const interval = setInterval(() => {
+    frame++;
+    const resolvedCount = Math.floor((frame / totalFrames) * finalText.length);
+
+    let output = '';
+    for (let i = 0; i < finalText.length; i++) {
+      if (finalText[i] === ' ') {
+        output += ' ';
+      } else if (i < resolvedCount) {
+        output += finalText[i];
+      } else {
+        output += chars[Math.floor(Math.random() * chars.length)];
+      }
+    }
+    el.textContent = output;
+
+    if (frame >= totalFrames) {
+      clearInterval(interval);
+      // Restore original span structure for CSS gradient to work perfectly
+      el.innerHTML = originalHTML;
+    }
+  }, 1000 / fps);
+})();
 </script>
 </body>
 </html>
