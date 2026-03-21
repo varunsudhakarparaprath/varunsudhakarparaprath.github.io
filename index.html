@@ -59,6 +59,12 @@
   .hero-tag::before,.hero-tag::after { content:''; width:24px; height:2px; background:var(--a); }
   .hero-name { font-family:'Space Grotesk',sans-serif; font-size:clamp(36px,5.5vw,72px); font-weight:800; line-height:1; letter-spacing:-2px; margin-bottom:20px; white-space:nowrap; background:linear-gradient(135deg,#ffffff 0%,#d4d4d4 40%,#c0c0c0 75%,#f0f0f0 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .hero-name .split-line { display:inline; }
+  /* SVG PATH DRAW ANIMATION */
+  .hero-name-svg-wrap { margin-bottom:20px; }
+  .hero-name-svg-wrap svg { width:100%; height:auto; display:block; overflow:visible; }
+  .svg-hero-name { fill:none; stroke:url(#nmGrad); stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:3000; stroke-dashoffset:3000; animation:svgDraw 2.4s cubic-bezier(0.4,0,0.2,1) 0.3s forwards, svgFill 0.8s ease 2.7s forwards; }
+  @keyframes svgDraw { to { stroke-dashoffset:0; } }
+  @keyframes svgFill { to { fill:url(#nmGrad); stroke-opacity:0; } }
   .hero-sub { font-size:16px; font-weight:400; color:var(--muted); line-height:1.7; max-width:520px; margin-bottom:28px; }
   .hero-pills { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-start; }
   .hero-pill { font-size:12px; font-weight:600; letter-spacing:0.5px; padding:7px 18px; border-radius:40px; background:rgba(255,255,255,0.05); border:1px solid var(--border2); color:var(--text); }
@@ -269,9 +275,19 @@
 <section class="hero" id="hero">
   <div class="hero-top">
     <div class="hero-top-left">
-      <h1 class="hero-name">
-        <span class="split-line">VARUN </span><span class="split-line">SUDHAKAR </span><span class="split-line">P</span>
-      </h1>
+      <div class="hero-name-svg-wrap" role="heading" aria-level="1" aria-label="Varun Sudhakar P">
+        <svg viewBox="0 0 800 90" preserveAspectRatio="xMinYMid meet">
+          <defs>
+            <linearGradient id="nmGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="40%" stop-color="#d4d4d4"/>
+              <stop offset="75%" stop-color="#c0c0c0"/>
+              <stop offset="100%" stop-color="#f0f0f0"/>
+            </linearGradient>
+          </defs>
+          <text class="svg-hero-name" x="2" y="76" font-family="'Space Grotesk', sans-serif" font-size="72" font-weight="800" letter-spacing="-2">VARUN SUDHAKAR P</text>
+        </svg>
+      </div>
       <p class="hero-sub">Senior SAP BTP Technology Consultant — architecting enterprise solutions across 7 countries and 13+ years of global experience.</p>
       <div class="hero-pills">
         <span class="hero-pill"><i class="fas fa-map-marker-alt" style="color:var(--a);margin-right:6px;font-size:11px"></i>Qatar, Middle East</span>
@@ -1028,47 +1044,6 @@ window.addEventListener('scroll',()=>{const y=window.scrollY;const bot=document.
   });
 })();
 
-/* ── HERO NAME SCRAMBLE ── */
-(function() {
-  const el = document.querySelector('.hero-name');
-  if (!el) return;
-
-  const finalText = 'VARUN SUDHAKAR P';
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#@$%&!?0123456789';
-  const duration = 2000;   // total ms
-  const fps = 30;
-  const totalFrames = Math.floor(duration / (1000 / fps));
-  let frame = 0;
-
-  // Save original HTML to restore after animation
-  const originalHTML = el.innerHTML;
-
-  // Set initial scrambled display
-  el.textContent = finalText.split('').map(c => c === ' ' ? ' ' : chars[Math.floor(Math.random() * chars.length)]).join('');
-
-  const interval = setInterval(() => {
-    frame++;
-    const resolvedCount = Math.floor((frame / totalFrames) * finalText.length);
-
-    let output = '';
-    for (let i = 0; i < finalText.length; i++) {
-      if (finalText[i] === ' ') {
-        output += ' ';
-      } else if (i < resolvedCount) {
-        output += finalText[i];
-      } else {
-        output += chars[Math.floor(Math.random() * chars.length)];
-      }
-    }
-    el.textContent = output;
-
-    if (frame >= totalFrames) {
-      clearInterval(interval);
-      // Restore original span structure for CSS gradient to work perfectly
-      el.innerHTML = originalHTML;
-    }
-  }, 1000 / fps);
-})();
 </script>
 </body>
 </html>
